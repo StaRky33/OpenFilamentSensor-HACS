@@ -1,0 +1,6 @@
+{
+  "name": "Open Filament Sensor",
+  "description": "Home Assistant integration for the Open Filament Sensor (OFS) ESP32-based filament jam detector.",
+  "render_readme": true,
+  "homeassistant": "2024.1.0"
+}

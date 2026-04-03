@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Open Filament Sensor",
+        "description": "Enter the IP address of your OFS device (e.g. 192.168.1.25) and give it a friendly name.",
+        "data": {
+          "host": "Device IP Address",
+          "device_name": "Device Name"
+        }
+      },
+      "camera": {
+        "title": "Link Printer Camera (Optional)",
+        "description": "Select the camera entity from your Elegoo printer integration to include snapshots in notifications.",
+        "data": {
+          "camera_entity": "Printer Camera"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to the OFS device. Please check the IP address and ensure the device is online."
+    },
+    "abort": {
+      "already_configured": "This OFS device is already configured."
+    }
+  }
+}

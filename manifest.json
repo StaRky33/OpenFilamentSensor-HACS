@@ -1,0 +1,12 @@
+{
+  "domain": "open_filament_sensor",
+  "name": "Open Filament Sensor",
+  "version": "1.0.0",
+  "documentation": "https://github.com/StaRky33/ofs-hacs",
+  "issue_tracker": "https://github.com/StaRky33/ofs-hacs/issues",
+  "codeowners": ["@StaRky33"],
+  "requirements": [],
+  "dependencies": [],
+  "config_flow": true,
+  "iot_class": "local_polling"
+}

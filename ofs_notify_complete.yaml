@@ -1,0 +1,65 @@
+blueprint:
+  name: OFS - Notify on Print Complete
+  description: >
+    Send a push notification with a camera snapshot and print duration when a
+    print completes. Duration is read from the Elegoo printer integration.
+  domain: automation
+  input:
+    print_status_sensor:
+      name: Print Status Sensor
+      description: The "Print Status" sensor from your OFS device.
+      selector:
+        entity:
+          integration: open_filament_sensor
+    print_time_sensor:
+      name: Print Time Sensor
+      description: >
+        The current print time sensor from your Elegoo printer integration
+        (e.g. sensor.centauri_carbon_current_print_time). Value must be in minutes.
+      selector:
+        entity:
+          domain: sensor
+    notify_action:
+      name: Notification Action
+      description: The notification service to use (e.g. notify.mobile_app_your_phone).
+      selector:
+        action: {}
+    camera_entity:
+      name: Printer Camera (Optional)
+      description: Camera entity to include a snapshot in the notification.
+      default: ""
+      selector:
+        entity:
+          domain: camera
+
+triggers:
+  - entity_id: !input print_status_sensor
+    to: "Complete"
+    trigger: state
+
+conditions: []
+
+actions:
+  - variables:
+      print_time_raw: "{{ states(!input print_time_sensor) | float(0) }}"
+      total_seconds: "{{ (print_time_raw * 60) | int }}"
+      duration: >
+        {{ '%02d:%02d:%02d' | format(
+          total_seconds // 3600,
+          (total_seconds % 3600) // 60,
+          total_seconds % 60
+        ) }}
+  - action: !input notify_action
+    data:
+      title: "Print Complete!"
+      message: "Your print has finished. Duration: {{ duration }}"
+      data:
+        tag: ofs_complete
+        priority: high
+        ttl: 0
+        image: >
+          {% if '!input camera_entity' != '' %}
+            /api/camera_proxy/{{ '!input camera_entity' }}
+          {% endif %}
+
+mode: single

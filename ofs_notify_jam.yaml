@@ -1,0 +1,77 @@
+blueprint:
+  name: OFS - Notify on Filament Jam
+  description: >
+    Send a push notification with a camera snapshot when a filament jam is
+    detected by the Open Filament Sensor. Requires the OFS integration and
+    optionally an Elegoo printer camera.
+  domain: automation
+  input:
+    filament_stopped_sensor:
+      name: Filament Stopped Sensor
+      description: The "Filament Stopped" sensor from your OFS device.
+      selector:
+        entity:
+          integration: open_filament_sensor
+    current_layer_sensor:
+      name: Current Layer Sensor
+      description: The "Current Layer" sensor from your OFS device.
+      selector:
+        entity:
+          integration: open_filament_sensor
+    total_layers_sensor:
+      name: Total Layers Sensor
+      description: The "Total Layers" sensor from your OFS device.
+      selector:
+        entity:
+          integration: open_filament_sensor
+    hard_jam_sensor:
+      name: Hard Jam Sensor
+      description: The "Hard Jam %" sensor from your OFS device.
+      selector:
+        entity:
+          integration: open_filament_sensor
+    soft_jam_sensor:
+      name: Soft Jam Sensor
+      description: The "Soft Jam %" sensor from your OFS device.
+      selector:
+        entity:
+          integration: open_filament_sensor
+    notify_action:
+      name: Notification Action
+      description: The notification service to use (e.g. notify.mobile_app_your_phone).
+      selector:
+        action: {}
+    camera_entity:
+      name: Printer Camera (Optional)
+      description: Camera entity to include a snapshot in the notification.
+      default: ""
+      selector:
+        entity:
+          domain: camera
+
+triggers:
+  - entity_id: !input filament_stopped_sensor
+    to: "True"
+    trigger: state
+
+conditions: []
+
+actions:
+  - action: !input notify_action
+    data:
+      title: "Filament Jam Detected!"
+      message: >
+        Print paused at layer {{ states(filament_stopped_sensor) }}.
+        Layer: {{ states(!input current_layer_sensor) }}/{{ states(!input total_layers_sensor) }}.
+        Hard jam: {{ states(!input hard_jam_sensor) }}%,
+        Soft jam: {{ states(!input soft_jam_sensor) }}%.
+      data:
+        tag: ofs_jam
+        priority: high
+        ttl: 0
+        image: >
+          {% if '!input camera_entity' != '' %}
+            /api/camera_proxy/{{ '!input camera_entity' }}
+          {% endif %}
+
+mode: single
