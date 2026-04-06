@@ -1,0 +1,22 @@
+alias: "OFS: Notify Filament Jam"
+description: Send notification when a filament jam is detected
+triggers:
+  - entity_id: sensor.ofs_filament_stopped
+    to: "True"
+    trigger: state
+conditions: []
+actions:
+  - data:
+      title: Filament Jam Detected!
+      message: >
+        Print paused at layer {{ states('sensor.ofs_current_layer') }}/{{
+        states('sensor.ofs_total_layers') }}. Hard jam: {{
+        states('sensor.ofs_hard_jam') }}%, Soft jam: {{
+        states('sensor.ofs_soft_jam') }}%
+      data:
+        tag: ofs_jam
+        priority: high
+        ttl: 0
+        image: /api/camera_proxy/camera.centauri_carbon_chamber_camera
+    action: notify.mobile_app_pixel_7a
+mode: single

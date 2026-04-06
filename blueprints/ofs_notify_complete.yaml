@@ -1,65 +1,61 @@
 blueprint:
-  name: OFS - Notify on Print Complete
-  description: >
-    Send a push notification with a camera snapshot and print duration when a
-    print completes. Duration is read from the Elegoo printer integration.
+  name: OFS - Notify Print on Complete
+  description: Send notification when a print completes
   domain: automation
+
   input:
     print_status_sensor:
-      name: Print Status Sensor
-      description: The "Print Status" sensor from your OFS device.
-      selector:
-        entity:
-          integration: open_filament_sensor
-    print_time_sensor:
-      name: Print Time Sensor
-      description: >
-        The current print time sensor from your Elegoo printer integration
-        (e.g. sensor.centauri_carbon_current_print_time). Value must be in minutes.
+      name: Print status sensor
       selector:
         entity:
           domain: sensor
-    notify_action:
-      name: Notification Action
-      description: The notification service to use (e.g. notify.mobile_app_your_phone).
+
+    print_time_sensor:
+      name: Print time sensor (minutes)
       selector:
-        action: {}
+        entity:
+          domain: sensor
+
     camera_entity:
-      name: Printer Camera (Optional)
-      description: Camera entity to include a snapshot in the notification.
-      default: ""
+      name: Camera
       selector:
         entity:
           domain: camera
 
-triggers:
-  - entity_id: !input print_status_sensor
+    notify_device:
+      name: Mobile device
+      description: Device to notify
+      selector:
+        device:
+          integration: mobile_app
+
+trigger:
+  - platform: state
+    entity_id: !input print_status_sensor
     to: "Complete"
-    trigger: state
 
-conditions: []
+condition: []
 
-actions:
-  - variables:
-      camera: !input camera_entity
-      total_seconds: "{{ (states(!input print_time_sensor) | float(0) * 60) | int }}"
-      duration: >
-        {{ '%02d:%02d:%02d' | format(
-          total_seconds // 3600,
-          (total_seconds % 3600) // 60,
-          total_seconds % 60
-        ) }}
-  - action: !input notify_action
+variables:
+  print_time_entity: !input print_time_sensor
+  camera_entity_id: !input camera_entity
+
+action:
+  - device_id: !input notify_device
+    domain: mobile_app
+    type: notify
+    title: "Print Complete!"
+    message: >-
+      {% set total_seconds =
+      (states(print_time_entity) | float * 60) | int %}
+      {% set h = (total_seconds // 3600) %}
+      {% set m = (total_seconds % 3600) // 60 %}
+      {% set s = total_seconds % 60 %}
+      Your print has finished. Duration: {{ '%02d:%02d:%02d' | format(h, m, s) }}
     data:
-      title: "Print Complete!"
-      message: "Your print has finished. Duration: {{ duration }}"
-      data:
-        tag: ofs_complete
-        priority: high
-        ttl: 0
-        image: >
-          {% if camera != '' %}
-            /api/camera_proxy/{{ camera }}
-          {% endif %}
+      tag: ofs_complete
+      priority: high
+      ttl: 0
+      image: "/api/camera_proxy/{{ camera_entity_id }}"
 
 mode: single

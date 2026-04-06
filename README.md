@@ -44,7 +44,7 @@ Copy `custom_components/open_filament_sensor/` into your HA `custom_components/`
 
 ## Automation Blueprints
 
-Two blueprints are included:
+Two blueprints are included but you can also directly copy the automations from the "automations" folder.
 
 ### Filament Jam Notification
 Sends a push notification with a camera snapshot when a jam is detected.

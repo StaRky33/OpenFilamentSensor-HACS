@@ -1,0 +1,23 @@
+alias: "OFS: Notify Print Complete"
+description: Send notification when print completes
+triggers:
+  - entity_id: sensor.ofs_print_status
+    to: Complete
+    trigger: state
+conditions: []
+actions:
+  - data:
+      title: Print Complete!
+      message: >-
+        {% set total_seconds =
+        (states('sensor.centauri_carbon_current_print_time') | float * 60) | int
+        %} {% set h = (total_seconds // 3600) %} {% set m = (total_seconds %
+        3600) // 60 %} {% set s = total_seconds % 60 %} Your print has finished.
+        Duration: {{ '%02d:%02d:%02d' | format(h, m, s) }}
+      data:
+        tag: ofs_complete
+        priority: high
+        ttl: 0
+        image: /api/camera_proxy/camera.centauri_carbon_chamber_camera
+    action: notify.mobile_app_pixel_7a
+mode: single
