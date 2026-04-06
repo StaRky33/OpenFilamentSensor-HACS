@@ -1,81 +1,79 @@
 blueprint:
-  name: OFS - Notify on Filament Jam
-  description: >
-    Send a push notification with a camera snapshot when a filament jam is
-    detected by the Open Filament Sensor. Requires the OFS integration and
-    optionally an Elegoo printer camera.
+  name: OFS - Notify Filament Jam
+  description: Send notification when a filament jam is detected
   domain: automation
+
   input:
-    filament_stopped_sensor:
-      name: Filament Stopped Sensor
-      description: The "Filament Stopped" sensor from your OFS device.
+    filament_sensor:
+      name: Filament stopped - Open filament sensor
       selector:
         entity:
-          integration: open_filament_sensor
+          domain: sensor
+
     current_layer_sensor:
-      name: Current Layer Sensor
-      description: The "Current Layer" sensor from your OFS device.
+      name: Current layer - Open filament sensor
       selector:
         entity:
-          integration: open_filament_sensor
+          domain: sensor
+
     total_layers_sensor:
-      name: Total Layers Sensor
-      description: The "Total Layers" sensor from your OFS device.
+      name: Total layers - Open filament sensor
       selector:
         entity:
-          integration: open_filament_sensor
+          domain: sensor
+
     hard_jam_sensor:
-      name: Hard Jam Sensor
-      description: The "Hard Jam %" sensor from your OFS device.
+      name: Hard jam - Open filament sensor (%)
       selector:
         entity:
-          integration: open_filament_sensor
+          domain: sensor
+
     soft_jam_sensor:
-      name: Soft Jam Sensor
-      description: The "Soft Jam %" sensor from your OFS device.
+      name: Soft jam - Open filament sensor (%)
       selector:
         entity:
-          integration: open_filament_sensor
-    notify_action:
-      name: Notification Action
-      description: The notification service to use (e.g. notify.mobile_app_your_phone).
-      selector:
-        action: {}
+          domain: sensor
+
     camera_entity:
-      name: Printer Camera (Optional)
-      description: Camera entity to include a snapshot in the notification.
-      default: ""
+      name: Camera
       selector:
         entity:
           domain: camera
 
-triggers:
-  - entity_id: !input filament_stopped_sensor
+    notify_device:
+      name: Mobile device
+      selector:
+        device:
+          integration: mobile_app
+
+trigger:
+  - platform: state
+    entity_id: !input filament_sensor
     to: "True"
-    trigger: state
 
-conditions: []
+condition: []
 
-actions:
-  - variables:
-      current_layer: "{{ states(!input current_layer_sensor) }}"
-      total_layers: "{{ states(!input total_layers_sensor) }}"
-      hard_jam: "{{ states(!input hard_jam_sensor) }}"
-      soft_jam: "{{ states(!input soft_jam_sensor) }}"
-      camera: !input camera_entity
-  - action: !input notify_action
+variables:
+  current_layer_entity: !input current_layer_sensor
+  total_layers_entity: !input total_layers_sensor
+  hard_jam_entity: !input hard_jam_sensor
+  soft_jam_entity: !input soft_jam_sensor
+  camera_entity_id: !input camera_entity
+
+action:
+  - device_id: !input notify_device
+    domain: mobile_app
+    type: notify
+    title: "Filament Jam Detected!"
+    message: >-
+      Print paused at layer {{ states(current_layer_entity) }}/{{
+      states(total_layers_entity) }}.
+      Hard jam: {{ states(hard_jam_entity) }}%,
+      Soft jam: {{ states(soft_jam_entity) }}%
     data:
-      title: "Filament Jam Detected!"
-      message: >
-        Print paused. Layer: {{ current_layer }}/{{ total_layers }}.
-        Hard jam: {{ hard_jam }}%, Soft jam: {{ soft_jam }}%.
-      data:
-        tag: ofs_jam
-        priority: high
-        ttl: 0
-        image: >
-          {% if camera != '' %}
-            /api/camera_proxy/{{ camera }}
-          {% endif %}
+      tag: ofs_jam
+      priority: high
+      ttl: 0
+      image: "/api/camera_proxy/{{ camera_entity_id }}"
 
 mode: single

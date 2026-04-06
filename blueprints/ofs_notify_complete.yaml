@@ -5,13 +5,13 @@ blueprint:
 
   input:
     print_status_sensor:
-      name: Print status sensor
+      name: Print status - Open Filament Sensor
       selector:
         entity:
           domain: sensor
 
     print_time_sensor:
-      name: Print time sensor (minutes)
+      name: Current print time - Centauri Carbon
       selector:
         entity:
           domain: sensor
