@@ -41,8 +41,8 @@ conditions: []
 
 actions:
   - variables:
-      print_time_raw: "{{ states(!input print_time_sensor) | float(0) }}"
-      total_seconds: "{{ (print_time_raw * 60) | int }}"
+      camera: !input camera_entity
+      total_seconds: "{{ (states(!input print_time_sensor) | float(0) * 60) | int }}"
       duration: >
         {{ '%02d:%02d:%02d' | format(
           total_seconds // 3600,
@@ -58,8 +58,8 @@ actions:
         priority: high
         ttl: 0
         image: >
-          {% if '!input camera_entity' != '' %}
-            /api/camera_proxy/{{ '!input camera_entity' }}
+          {% if camera != '' %}
+            /api/camera_proxy/{{ camera }}
           {% endif %}
 
 mode: single

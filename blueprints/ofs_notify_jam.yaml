@@ -57,21 +57,25 @@ triggers:
 conditions: []
 
 actions:
+  - variables:
+      current_layer: "{{ states(!input current_layer_sensor) }}"
+      total_layers: "{{ states(!input total_layers_sensor) }}"
+      hard_jam: "{{ states(!input hard_jam_sensor) }}"
+      soft_jam: "{{ states(!input soft_jam_sensor) }}"
+      camera: !input camera_entity
   - action: !input notify_action
     data:
       title: "Filament Jam Detected!"
       message: >
-        Print paused at layer {{ states(filament_stopped_sensor) }}.
-        Layer: {{ states(!input current_layer_sensor) }}/{{ states(!input total_layers_sensor) }}.
-        Hard jam: {{ states(!input hard_jam_sensor) }}%,
-        Soft jam: {{ states(!input soft_jam_sensor) }}%.
+        Print paused. Layer: {{ current_layer }}/{{ total_layers }}.
+        Hard jam: {{ hard_jam }}%, Soft jam: {{ soft_jam }}%.
       data:
         tag: ofs_jam
         priority: high
         ttl: 0
         image: >
-          {% if '!input camera_entity' != '' %}
-            /api/camera_proxy/{{ '!input camera_entity' }}
+          {% if camera != '' %}
+            /api/camera_proxy/{{ camera }}
           {% endif %}
 
 mode: single

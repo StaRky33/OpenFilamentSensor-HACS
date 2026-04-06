@@ -1,7 +1,7 @@
 {
   "domain": "open_filament_sensor",
   "name": "Open Filament Sensor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "documentation": "https://github.com/StaRky33/OpenFilamentSensor-HACS",
   "issue_tracker": "https://github.com/StaRky33/OpenFilamentSensor-HACS/issues",
   "codeowners": ["@StaRky33"],
