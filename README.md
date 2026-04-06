@@ -49,12 +49,12 @@ Two blueprints are included:
 ### Filament Jam Notification
 Sends a push notification with a camera snapshot when a jam is detected.
 
-[![Import Blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://raw.githubusercontent.com/StaRky33/OpenFilamentSensor-HACS/main/blueprints/automation/ofs_notify_jam.yaml)
+[![Import Blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://raw.githubusercontent.com/StaRky33/OpenFilamentSensor-HACS/main/blueprints/ofs_notify_jam.yaml)
 
 ### Print Complete Notification
 Sends a push notification with print duration and a camera snapshot when a print finishes.
 
-[![Import Blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://raw.githubusercontent.com/StaRky33/OpenFilamentSensor-HACS/main/blueprints/automation/ofs_notify_complete.yaml)
+[![Import Blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://raw.githubusercontent.com/StaRky33/OpenFilamentSensor-HACS/main/blueprints/ofs_notify_complete.yaml)
 
 ---
 
